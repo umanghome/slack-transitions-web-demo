@@ -1,5 +1,5 @@
 <script>
-  export let swipingEvent;
+  export let leftSwipingEvent;
   export let active = false;
 
   let swipeStyle = '';
@@ -27,7 +27,7 @@
     return;
   }
 
-  $: swipeStyle = updateStyle(swipingEvent) || '';
+  $: swipeStyle = updateStyle(leftSwipingEvent) || '';
 </script>
 
 <style>

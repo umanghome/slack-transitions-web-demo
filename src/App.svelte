@@ -3,9 +3,21 @@
 	import Messages from './screens/Messages.svelte';
 
 	let visible = 'channels';
+	let leftSwipingEvent;
 
-	let swipingEvent;
+	function handleChannelsFlick (event) {
+		visible = 'messages';
+	}
 </script>
 
-<Channels bind:swipingEvent active={visible === 'channels'} />
-<Messages {swipingEvent} active={visible === 'messages'} />
+<Channels
+	active={visible === 'channels'}
+
+	on:swiping={event => (leftSwipingEvent = event)}
+	on:flick={handleChannelsFlick}
+/>
+
+<Messages
+	{leftSwipingEvent}
+	active={visible === 'messages'}
+/>
