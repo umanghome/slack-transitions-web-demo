@@ -13,6 +13,7 @@
 <Channels
 	active={visible === 'channels'}
 
+	on:swiperelease={() => (leftSwipingEvent = null)}
 	on:swiping={event => (leftSwipingEvent = event)}
 	on:flick={handleChannelsFlick}
 />

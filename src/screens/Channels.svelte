@@ -1,6 +1,9 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+  import { calculateHorizontalSwipeVelocity } from '../utils';
   import SwipeListener from 'swipe-listener';
+
+  const dispatch = createEventDispatcher();
 
   const channels = Array(100).fill(0, 0, 100).map((_, i) => ({
     name: `channel_${i + 1}`,
@@ -9,10 +12,13 @@
 
   const unread = channels.filter(channel => channel.unread);
 
-  export let swipingEvent;
+  export let active;
 
+  let swipingEvent;
   let screen;
   let listener;
+
+  let swipeEventsForVelocity = [];
 
   onMount(() => {
     listener = SwipeListener(screen);
@@ -22,12 +28,36 @@
     listener.off();
   });
 
+  function clearEventsStoredForVelocty (event) {
+    swipeEventsForVelocity = [];
+  }
+
   function swipeHandler (event) {
-    console.log('swipe', event);
+    const swipedLeft = event.detail.directions.left;
+    const firstEvent = swipeEventsForVelocity[0];
+
+    clearEventsStoredForVelocty();
+
+    if (!swipedLeft) {
+      return;
+    }
+
+    const { velocity, percentageWidth } = calculateHorizontalSwipeVelocity([ firstEvent, event]);
+
+    if (velocity > 0.1 || percentageWidth > 0.5) {
+      dispatch('flick', {
+        velocity,
+        percentageWidth
+      });
+    }
   }
 
   function swipingHandler (event) {
     swipingEvent = event;
+
+    if (!swipeEventsForVelocity[0]) {
+      swipeEventsForVelocity = [event]
+    };
   }
 
   function getSwipeStyle (event) {
@@ -69,15 +99,26 @@
   .channel + .channel {
     margin-top: 0.6rem;
   }
+
+  .inactive {
+    transform: translateX(-20%);
+    filter: brightness(0.8);
+  }
 </style>
 
 <div
   class="screen"
+  class:inactive={!active} 
+  
   style={swipeStyle}
   bind:this={screen}
+
+  on:swiping
+  on:swiperelease
+  on:swiperelease={() => (swipingEvent = null)}
   on:swipe={swipeHandler} 
   on:swiping={swipingHandler}
-  on:swiperelease={() => (swipingEvent = null)}
+  on:swipecancel={clearEventsStoredForVelocty}
 >
   <div class="channels">
     <h3>Unread channels</h3>
