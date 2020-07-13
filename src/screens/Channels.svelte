@@ -76,7 +76,7 @@
       } else {
         const perc = distance * 20 / window.screen.width;
 
-        return `transform: translateX(-${perc}%); filter: brightness(${1 - (perc / 100)}); transition: none;`;
+        return `transform: translateX(-${perc}%); filter: brightness(${1 - (perc / 50)}); transition: none;`;
       }
     }
 
@@ -102,7 +102,7 @@
 
   .inactive {
     transform: translateX(-20%);
-    filter: brightness(0.8);
+    filter: brightness(0.5);
   }
 </style>
 
