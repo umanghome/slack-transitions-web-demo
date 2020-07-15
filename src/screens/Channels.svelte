@@ -1,7 +1,6 @@
 <script>
-  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { calculateHorizontalSwipeVelocity } from '../utils';
-  import SwipeListener from 'swipe-listener';
+  import { createEventDispatcher } from 'svelte';
+  import { flick } from '../utils';
 
   const dispatch = createEventDispatcher();
 
@@ -16,48 +15,11 @@
 
   let swipingEvent;
   let screen;
-  let listener;
 
   let swipeEventsForVelocity = [];
 
-  onMount(() => {
-    listener = SwipeListener(screen);
-  });
-
-  onDestroy(() => {
-    listener.off();
-  });
-
-  function clearEventsStoredForVelocty (event) {
-    swipeEventsForVelocity = [];
-  }
-
-  function swipeHandler (event) {
-    const swipedLeft = event.detail.directions.left;
-    const firstEvent = swipeEventsForVelocity[0];
-
-    clearEventsStoredForVelocty();
-
-    if (!swipedLeft) {
-      return;
-    }
-
-    const { velocity, percentageWidth } = calculateHorizontalSwipeVelocity([ firstEvent, event]);
-
-    if (velocity > 0.1 || percentageWidth > 0.5) {
-      dispatch('flick', {
-        velocity,
-        percentageWidth
-      });
-    }
-  }
-
   function swipingHandler (event) {
     swipingEvent = event;
-
-    if (!swipeEventsForVelocity[0]) {
-      swipeEventsForVelocity = [event]
-    };
   }
 
   function getSwipeStyle (event) {
@@ -113,12 +75,15 @@
   style={swipeStyle}
   bind:this={screen}
 
+  use:flick={{
+    direction: 'left'
+  }}
+
+  on:flick
   on:swiping
   on:swiperelease
   on:swiperelease={() => (swipingEvent = null)}
-  on:swipe={swipeHandler} 
-  on:swiping={swipingHandler}
-  on:swipecancel={clearEventsStoredForVelocty}
+  on:swiping={event => (swipingEvent = event)}
 >
   <div class="channels">
     <h3>Unread channels</h3>
