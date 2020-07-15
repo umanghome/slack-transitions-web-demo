@@ -1,8 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
   import { flick } from '../utils';
-
-  const dispatch = createEventDispatcher();
 
   const channels = Array(100).fill(0, 0, 100).map((_, i) => ({
     name: `channel_${i + 1}`,
@@ -14,13 +11,6 @@
   export let active;
 
   let swipingEvent;
-  let screen;
-
-  let swipeEventsForVelocity = [];
-
-  function swipingHandler (event) {
-    swipingEvent = event;
-  }
 
   function getSwipeStyle (event) {
     if (event) {
@@ -73,7 +63,6 @@
   class:inactive={!active} 
   
   style={swipeStyle}
-  bind:this={screen}
 
   use:flick={{
     direction: 'left'
