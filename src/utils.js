@@ -11,7 +11,7 @@ function calculateHorizontalSwipeVelocity ([ startEvent, endEvent ]) {
   const velocity = distance / time;
 
   const target = event.target;
-  const percentageWidth = distance / target.getBoundingClientRect().width;
+  const percentageWidth = distance / target.offsetWidth;
 
   return {
     velocity,
