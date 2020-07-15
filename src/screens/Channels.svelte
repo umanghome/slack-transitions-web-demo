@@ -8,6 +8,7 @@
 
   const unread = channels.filter(channel => channel.unread);
 
+  export let rightSwipingEvent;
   export let active;
 
   let swipingEvent;

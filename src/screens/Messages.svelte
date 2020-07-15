@@ -1,6 +1,10 @@
 <script>
+  import { flick } from '../utils';
+
   export let leftSwipingEvent;
   export let active = false;
+
+  let swipingEvent;
 
   let swipeStyle = '';
 
@@ -36,6 +40,21 @@
   }
 </style>
 
-<div class="screen" class:inactive={!active} style={swipeStyle}>
+<div
+  class="screen"
+  class:inactive={!active}
+  
+  style={swipeStyle}
+  
+  use:flick={{
+    direction: 'right'
+  }}
+
+  on:flick
+  on:swiping
+  on:swiperelease
+  on:swiperelease={() => (swipingEvent = null)}
+  on:swiping={event => (swipingEvent = event)}
+  >
   <h3>Messages</h3>
 </div>
