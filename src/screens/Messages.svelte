@@ -15,7 +15,13 @@
         return;
       }
 
-      const distance = Math.abs(x[0] - x[1]);
+      const distance = x[1] - x[0];
+
+      if (distance < 0) {
+        // Swipe is in opposite direction
+        return;
+      }
+
       const perc = distance * 100 / window.screen.width;
 
       return `transform: translateX(${perc}%); transition: none;`;
@@ -27,7 +33,13 @@
         return;
       }
 
-      const distance = Math.abs(x[0] - x[1]);
+      const distance = x[0] - x[1];
+
+      if (distance < 0) {
+        // Swipe is in opposite direction
+        return;
+      }
+
       const perc = distance * 100 / window.screen.width;
 
       return `transform: translateX(${100 - perc}%); transition: none;`;
