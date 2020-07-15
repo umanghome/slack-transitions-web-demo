@@ -79,3 +79,7 @@ button:focus {
 	
 	transition: 0.125s linear;
 }
+
+.overlay {
+	transition: 0.125s linear;
+}

@@ -31,7 +31,10 @@
 
       const perc = distance * 20 / window.screen.width;
 
-      return `transform: translateX(-${perc}%); filter: brightness(${1 - (perc / 50)}); transition: none;`;
+      return {
+        main: `transform: translateX(-${perc}%); transition: none;`,
+        overlay: `opacity: ${(perc / 50)}; transition: none;`,
+      }
     } else if (right) {
       const { detail } = right;
       const { x } = detail;
@@ -46,17 +49,24 @@
         // Swipe is in opposite direction
         return;
       }
-      
+
       const perc = distance * 20 / window.screen.width;
 
-      return `transform: translateX(-${20 - perc}%); filter: brightness(${0.5 + (perc / 50)}); transition: none;`;
+      return {
+        main: `transform: translateX(-${20 - perc}%); transition: none;`,
+        overlay: `opacity: ${0.5 - (perc / 50)}; transition: none;`,
+      };
     }
 
-    return '';
+    return {
+      main: '',
+      overlay: '',
+    };
   }
 
-  let swipeStyle = '';
-  $: swipeStyle = getSwipeStyle(swipingEvent, rightSwipingEvent);
+  const initStyles = { main: '', overlay: '' }
+  let swipeStyle = initStyles;
+  $: swipeStyle = getSwipeStyle(swipingEvent, rightSwipingEvent) || initStyles;
 </script>
 
 <style>
@@ -74,7 +84,22 @@
 
   .inactive {
     transform: translateX(-20%);
-    filter: brightness(0.5);
+  }
+
+  .overlay {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+
+    opacity: 0;
+  }
+
+  .inactive .overlay {
+    opacity: 0.5;
   }
 </style>
 
@@ -82,7 +107,7 @@
   class="screen"
   class:inactive={!active} 
   
-  style={swipeStyle}
+  style={swipeStyle.main}
 
   use:flick={{
     direction: 'left'
@@ -106,4 +131,5 @@
       <div class="channel">#{channel.name}</div>
     {/each}
   </div>
+  <div class="overlay" style={swipeStyle.overlay}></div>
 </div>
