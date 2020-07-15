@@ -13,31 +13,38 @@
 
   let swipingEvent;
 
-  function getSwipeStyle (event) {
-    if (event) {
-      const { detail } = event;
+  function getSwipeStyle (current, right) {
+    if (current) {
+      const { detail } = current;
       const { x } = detail;
 
       if (!x) {
         return;
       }
 
-      const distance = x[0] - x[1];
+      const distance = Math.abs(x[0] - x[1]);
+      const perc = distance * 20 / window.screen.width;
 
-      if (distance < 0) {
+      return `transform: translateX(-${perc}%); filter: brightness(${1 - (perc / 50)}); transition: none;`;
+    } else if (right) {
+      const { detail } = right;
+      const { x } = detail;
+
+      if (!x) {
         return;
-      } else {
-        const perc = distance * 20 / window.screen.width;
-
-        return `transform: translateX(-${perc}%); filter: brightness(${1 - (perc / 50)}); transition: none;`;
       }
+
+      const distance = Math.abs(x[0] - x[1]);
+      const perc = distance * 20 / window.screen.width;
+
+      return `transform: translateX(-${20 - perc}%); filter: brightness(${0.5 + (perc / 50)}); transition: none;`;
     }
 
-    return;
+    return '';
   }
 
   let swipeStyle = '';
-  $: swipeStyle = getSwipeStyle(swipingEvent);
+  $: swipeStyle = getSwipeStyle(swipingEvent, rightSwipingEvent);
 </script>
 
 <style>

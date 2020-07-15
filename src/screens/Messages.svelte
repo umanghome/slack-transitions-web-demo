@@ -6,32 +6,38 @@
 
   let swipingEvent;
 
-  let swipeStyle = '';
-
-  function updateStyle (event) {
-    if (event) {
-      const { detail } = event;
+  function getSwipeStyle (current, left) {
+    if (current) {
+      const { detail } = current;
       const { x } = detail;
 
       if (!x) {
         return;
       }
 
-      const distance = x[0] - x[1];
+      const distance = Math.abs(x[0] - x[1]);
+      const perc = distance * 100 / window.screen.width;
 
-      if (distance < 0) {
+      return `transform: translateX(${perc}%); transition: none;`;
+    } else if (left) {
+      const { detail } = left;
+      const { x } = detail;
+
+      if (!x) {
         return;
-      } else {
-        const perc = distance * 100 / window.screen.width;
-
-        return `transform: translateX(${100 - perc}%); transition: none;`;
       }
+
+      const distance = Math.abs(x[0] - x[1]);
+      const perc = distance * 100 / window.screen.width;
+
+      return `transform: translateX(${100 - perc}%); transition: none;`;
     }
 
-    return;
+    return '';
   }
 
-  $: swipeStyle = updateStyle(leftSwipingEvent) || '';
+  let swipeStyle = '';
+  $: swipeStyle = getSwipeStyle(swipingEvent, leftSwipingEvent);
 </script>
 
 <style>
