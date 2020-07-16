@@ -19,6 +19,7 @@
 	{rightSwipingEvent}
 	active={visible === 'channels'}
 
+	on:selectchannel={() => (visible = 'messages')}
 	on:swiperelease={() => (leftSwipingEvent = null)}
 	on:swiping={event => (leftSwipingEvent = event)}
 	on:flick={handleChannelsFlick}

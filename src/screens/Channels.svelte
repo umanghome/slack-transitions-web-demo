@@ -1,7 +1,10 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import { flick } from '../utils';
 
-  const channels = Array(100).fill(0, 0, 100).map((_, i) => ({
+  const dispatch = createEventDispatcher();
+
+  const channels = Array(10).fill(0, 0, 10).map((_, i) => ({
     name: `channel_${i + 1}`,
     unread: i < 4
   }));
@@ -130,13 +133,21 @@
   <div class="channels">
     <h3>Unread channels</h3>
     {#each unread as channel}
-      <div class="channel unread">#{channel.name}</div>
+      <div
+        class="channel unread"
+        on:click={() => dispatch('selectchannel')}>
+        #{channel.name}
+      </div>
     {/each}
   </div>
   <div class="channels">
     <h3>All channels</h3>
     {#each channels as channel}
-      <div class="channel">#{channel.name}</div>
+      <div
+        class="channel"
+        on:click={() => dispatch('selectchannel')}>
+        #{channel.name}
+      </div>
     {/each}
   </div>
   <div class="overlay" style={swipeStyle.overlay}></div>
