@@ -78,8 +78,16 @@
     margin-top: 2em;
   }
 
+  .channel::first-letter {
+    margin-left: 12px;
+  }
+
+  .channel.unread {
+    font-weight: bold;;
+  }
+
   .channel + .channel {
-    margin-top: 0.6rem;
+    margin-top: 0.8rem;
   }
 
   .inactive {
