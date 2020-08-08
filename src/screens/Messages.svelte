@@ -1,14 +1,22 @@
 <script>
   import { flick } from '../utils';
 
-  export let leftSwipingEvent;
-  export let active = false;
+  export let messagesSwipingEvent; // `swiping` event on this (messages) screen
+  export let channelsSwipingEvent; // `swiping` event on the channels screen
+  export let active = false; // Is this the currently active screen?
 
-  let swipingEvent;
+  /**
+   * Returns the styles to be applied
+   * @param {Event} messagesSwipingEvent `swiping` event on this screen
+   * @param {Event} channelsSwipingEvent `swiping` event on the channels screen
+   * 
+   * @returns {string|undefined} Styles for the main element
+   */
+  function getSwipeStyle (messagesSwipingEvent, channelsSwipingEvent) {
+    if (messagesSwipingEvent) {
+      // User is swiping on the Messages screen
 
-  function getSwipeStyle (current, left) {
-    if (current) {
-      const { detail } = current;
+      const { detail } = messagesSwipingEvent;
       const { x } = detail;
 
       if (!x) {
@@ -19,14 +27,20 @@
 
       if (distance < 0) {
         // Swipe is in opposite direction
+        // We don't want to trigger anything in the UI on the Messages screen
         return;
       }
 
+      // We'll just move the Messages screen as much to the left as the swipe distance
       const perc = distance * 100 / window.screen.width;
 
+      // Disabling transitions because we want the repositioning to happen instantly
+
       return `transform: translateX(${perc}%); transition: none;`;
-    } else if (left) {
-      const { detail } = left;
+    } else if (channelsSwipingEvent) {
+      // User is swiping on the Channels screen
+
+      const { detail } = channelsSwipingEvent;
       const { x } = detail;
 
       if (!x) {
@@ -37,10 +51,14 @@
 
       if (distance < 0) {
         // Swipe is in opposite direction
+        // We don't want to trigger anything in the UI on the Messages screen
         return;
       }
 
+      // We'll move the messages screen as much into the view from the right as the swipe distance
       const perc = distance * 100 / window.screen.width;
+
+      // Disabling transitions because we want the repositioning to happen instantly
 
       return `transform: translateX(${100 - perc}%); transition: none;`;
     }
@@ -48,8 +66,17 @@
     return '';
   }
 
-  let swipeStyle = '';
-  $: swipeStyle = getSwipeStyle(swipingEvent, leftSwipingEvent);
+  const initStyles = ''; // Initial styles for the main element
+
+  // Styles that make the UI feel like it is being swiped on
+  let swipeStyle = initStyles;
+
+  /**
+   * When `messagesSwipingEvent` or `channelsSwipingEvent` change,
+   * try to calculate the new styles.
+   * Fall back to `initStyles` on failure.
+   */
+  $: swipeStyle = getSwipeStyle(messagesSwipingEvent, channelsSwipingEvent) || initStyles;
 </script>
 
 <style>
@@ -71,8 +98,6 @@
   on:flick
   on:swiping
   on:swiperelease
-  on:swiperelease={() => (swipingEvent = null)}
-  on:swiping={event => (swipingEvent = event)}
   >
   <h3>Messages</h3>
 </div>
